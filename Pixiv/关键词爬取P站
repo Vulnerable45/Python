@@ -5,7 +5,7 @@ import os
 from urllib.parse import quote
 from PIL import Image
 from io import BytesIO
-
+#By WuXin
 name = input('请输入关键字：')
 a = input('起始页码：')
 p = input('终止页码：')
