@@ -1,0 +1,76 @@
+import requests
+import datetime
+import re
+import os
+from urllib.parse import quote
+from PIL import Image
+from io import BytesIO
+
+name = input('请输入关键字：')
+a = input('起始页码：')
+p = input('终止页码：')
+text = quote(name, 'utf-8')
+while True:
+    o_path = r"C:\Users\lenovo\Desktop\Pixiv"
+    if not os.path.exists(o_path):
+        print('路径不存在!')
+    else :
+        os.makedirs(o_path + '\\' + name+'('+a+'-'+p+')'+'页')
+        file_path = o_path + '\\' + name+'('+a+'-'+p+')'+'页'
+        break
+start=datetime.datetime.now()
+headers = {
+    "cookie": ""
+    "user-agent": "" 
+    #输入自己的p站信息
+    "referer": "https://www.pixiv.net/ajax/search/artworks/"+text+"?word="+text+"&order=date_d&mode=all&p=1&s_mode=s_tag&type=all&lang=zh"
+}
+for url in range(int(a),int(p)+1):
+    URL = "https://www.pixiv.net/ajax/search/artworks/" + text + "?word=" + text + "&order=date_d&mode=all&p=" + str(url) + "&s_mode=s_tag&type=all&lang=zh"
+    print(URL)
+    session = requests.get(URL, headers=headers)
+    JSON = session.json()
+    i = d = f = 0
+    while i < len(JSON["body"]["illustManga"]["data"]):
+
+        ID = JSON["body"]["illustManga"]["data"][i]["id"]
+        userId = JSON["body"]["illustManga"]["data"][i]["userId"]
+        title = JSON["body"]["illustManga"]["data"][i]["title"]
+        userName = JSON["body"]["illustManga"]["data"][i]["userName"]
+        url = JSON["body"]["illustManga"]["data"][i]["url"]
+        o_url_1 = re.sub(r'/c/250x250_80_a2/[a-zA-Z-]*/', '/img-original/', url)
+        o_url = re.sub(r'_[a-z]+1200.', '.', o_url_1)
+        if f:
+            o_url=re.sub('.jpg','.png',o_url)
+
+        print("作品名称：" + title, "作品ID：" + str(ID),  "作者姓名和ID：" + userName, str(userId))
+        print(o_url+'\n'+url)
+        print('Downloading……\n')
+
+        img_url = o_url
+        file_name ="作品ID：" + str(ID)
+        try:
+            file_suffix = os.path.splitext(img_url)[1]
+            filename = '{}{}{}{}'.format(file_path, os.sep, file_name, file_suffix)
+#            print(file_path)
+            response = requests.get(img_url, headers=headers)
+#            print(os.sep)
+            image = Image.open(BytesIO(response.content))
+#            print(file_name)
+            image.save(filename)
+#            print(file_suffix)
+            f=0
+        except IOError as e:
+            if f==0:
+                f=1
+                i-=1
+            else:
+                print("IOError")
+                f=0
+                d += 1
+        except Exception as e:
+            print("Exception")
+            d += 1
+        i += 1
+end=datetime.datetime.now()
+print("用时：{},共捕捉图片：{}张,失败 ；{}".format(end-start,i - d,d))
