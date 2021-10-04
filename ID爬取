@@ -1,0 +1,80 @@
+import os
+import re
+import datetime
+import requests
+from PIL import Image
+from io import BytesIO
+
+start = datetime.datetime.now()
+input_file = r'C:\Users\lenovo\Desktop\Pixiv\作者ID\ID.txt'
+filereader = open(input_file, 'r',encoding='utf_8')
+allid = filereader.readlines(0)
+sign = int(input("请输入数量： "))
+for id1 in allid:
+    ID =  re.sub('\n', '', id1)
+    while True:
+        o_path = r'C:\Users\lenovo\Desktop\Pixiv\作者ID'
+        if not os.path.exists(o_path):
+            print('路径不存在!')
+        else:
+            break
+
+    headers = {
+        'referer': 'https://www.pixiv.net/users',
+        "cookie": ""
+        "user-agent": "",
+        #输入个人的P站信息
+    }
+    URL_1 = "https://www.pixiv.net/ajax/user/"+ID+"/profile/all?lang=zh"
+    URL_2 = "https://www.pixiv.net/ajax/illust/"
+    JSON = requests.get(URL_1, headers=headers).json()
+
+    i = q = 0
+    file_path = o_path
+
+    for result in JSON["body"]["illusts"]:
+        sign-=1
+        if sign < 0:
+            break
+        id_1 = re.sub(' :None', '', result)
+        JSON = requests.get(URL_2+id_1, headers=headers).json()
+
+        url = JSON["body"]["urls"]["original"]
+        title = JSON["body"]["illustTitle"]
+        userName = JSON["body"]["userName" ]
+#       o_url_1 = re.sub(r'/c/250x250_80_a2/[a-zA-Z-]*/', '/img-original/', url)
+#       o_url = re.sub(r'_[a-z]+1200.', '.', o_url_1)
+#       if f:
+#           o_url = re.sub('.jpg', '.png', o_url)
+
+        information = "作品名称：" + title + "作品ID：" + str(id_1)
+        print(url)
+        print(information)
+        print('Downloading……')
+
+        img_url = url
+        file_name = "作品ID：" + str(id_1)
+
+        try:
+            if  os.path.exists(o_path + '\\' + userName):
+                pass
+            else :
+                os.makedirs(o_path + '\\' + userName)
+                file_path = o_path + '\\' + userName
+
+            file_suffix = os.path.splitext(img_url)[1]
+            filename = '{}{}{}{}'.format(file_path, os.sep, file_name, file_suffix)
+            img_src = url
+            response = requests.get(img_src, headers=headers)
+            image = Image.open(BytesIO(response.content))
+            image.save(filename)
+
+        except IOError as e:
+            print("IOError")
+            q += 1
+        except Exception as e:
+            print("Exception")
+            q += 1
+
+    end=datetime.datetime.now()
+    print("用时："+str(end-start))
