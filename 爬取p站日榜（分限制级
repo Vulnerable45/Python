@@ -1,0 +1,91 @@
+import requests
+import re
+import os
+from PIL import Image
+from io import BytesIO
+import datetime
+from datetime import date
+
+a = input('起始页码：')
+p = input('终止页码：')
+start=datetime.datetime.now()
+yesterday = str(int(date.today().strftime('%Y%m%d'))-2)
+date_1 = yesterday
+date_1 = input('请输入日期：（YYYYMMDD）  ')
+switch = input('请选择限制级：（R18 or Normal） ')
+
+
+while True:
+    o_path = r"C:\Users\lenovo\Desktop\Pixiv\日榜"
+    if not os.path.exists(o_path):
+        print('路径不存在!')
+    else :
+        os.makedirs(o_path + '\\' + date_1+'('+a+'-'+p+')'+'页')
+        file_path = o_path + '\\' + date_1+'('+a+'-'+p+')'+'页'
+        break
+
+#URL = "https://www.pixiv.net/ajax/search/artworks/" + text + "?word=" + text + "&order=date_d&mode=all&p=" + str(url) + "&s_mode=s_tag&type=all&lang=zh"
+
+for url in range(int(a),int(p)+1):
+    if switch == 'R18':
+        headers = {
+            "cookie": "first_visit_datetime_pc=2021-09-17+14%3A02%3A34; p_ab_id=8; p_ab_id_2=6; p_ab_d_id=297918597; yuid_b=J2RYBFk; _gcl_au=1.1.1557949106.1631854954; __utmz=235335808.1631854956.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); _ga=GA1.2.103835241.1631854956; PHPSESSID=41946181_UYUBdnztwPdCnyn3qJWo1u6VfuS7scbN; device_token=1fdc9ca47ed69e7d1cda28fe017e93c6; privacy_policy_agreement=3; c_type=31; privacy_policy_notification=0; a_type=0; b_type=1; ki_r=; ki_s=214908%3A0.0.0.0.2%3B214994%3A0.0.0.0.2%3B215190%3A0.0.0.0.2%3B219012%3A0.0.0.0.2; login_ever=yes; __utmv=235335808.|2=login%20ever=yes=1^3=plan=normal=1^5=gender=male=1^6=user_id=41946181=1^9=p_ab_id=8=1^10=p_ab_id_2=6=1^11=lang=zh=1; _gid=GA1.2.285373365.1632383146; __utma=235335808.103835241.1631854956.1632383140.1632389246.8; tag_view_ranking=-98s6o2-Rp~EZQqoW9r8g~2R7RYffVfj~Lt-oEicbBr~jH0uD88V6F~_EOd7bsGyl~sAwDH104z0~YQeoAIQ1YG~YCJduqB2Ci~5oPIfUbtd6~faHcYIP1U0~RTJMXD26Ak~fg8EOt4owo~afM5Sp3Id1~DpO7Lofslr~9iwIVDvitq~9Gbahmahac~ziiAzr_h04~qQ_EVgNkbZ~_a1-9YRR_r~cryvQ5p2Tx~ZCN3rO9b1p~zeoQruK5tm~kP7msdIeEU~WbBWp_OUQ1~Gtd5A8fdBE~-1qXe98Vg-~I64GZApCnd~Wxk4MkYNNf~Q9NgLRGNeF~-WkHnwhdbF~bFSfrDCnUA~Z-tHqqO0lV~XW47HdFpTH~6Yfjqsa6c3~knQuLJIOQ6~eqak96Xkn_~Xs030_KD5O~34B2hed_9H~F2a_INSFn3~ATsFGTskY8~RKPZpNl_j9~QfJ7MtaSNM~vshhCHuYdi~SOCpnnQ8rf~eVxus64GZU~9oafiNFKrr~cuF6-_UeSz~Ie2c51_4Sp~KOnmT1ndWG~dg_40nEhSE~sylWziJEvL~txZ9z5ByU7~PNfC-sxfsg~MnGbHeuS94~s6e50IZTbv~tlI9YiBhjp~dtMyRHWdBF~wb0taLpkzz~u3EAZmzDcl~SapL8yQw4Y~zyKU3Q5L4C~tgP8r-gOe_~CiSfl_AE0h~1LN8nwTqf_~_RfiUqtsxe~eK9vnMvjjT~Xs-7j6fVPs~XALOkB5ogB; __utmc=235335808; __utmt=1; __utmb=235335808.13.10.1632389246; __cf_bm=Zlp_OFaAQkGBRA1x2MMjd9mPZYbkg_4wG.S99wyjUsQ-1632391721-0-AdaDVS39jTYrp7oKcfAuFgeHGzXVvP8S0tZH+H5Oq82zZRS/YOPwIF8doLcejrHSvl32OqsIlvR0dw92F/0YzT6J/J1ad5JHmP0u/oIUkAER83jkwuZNfnrPNn/3b2r/at7ja+qHx9h4mGeE6reHg8EIxDOA5y7znIWIH/rv2C+buHQtRKTx2j907DoXuYnIUA==; ki_t=1632288698677%3B1632383142273%3B1632391723340%3B2%3B28",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
+            "referer": "https://www.pixiv.net/ranking.php?mode=daily_r18&date=" + date_1 + "&p=" + str(url) + "&format=json"
+        }
+        URL = "https://www.pixiv.net/ranking.php?mode=daily_r18&date=" + date_1 + "&p=" + str(url) + "&format=json"
+    else:
+        headers = {
+            "cookie": ""
+            "user-agent": ""
+            #输入自己的p站信息
+            "referer": "https://www.pixiv.net/ranking.php?mode=daily&date=" + date_1 + "&p=" + str(url) + "&format=json"
+        }
+        URL = "https://www.pixiv.net/ranking.php?mode=daily&date=" + date_1 + "&p=" + str(url) + "&format=json"
+
+    print(URL)
+    session = requests.get(URL, headers=headers)
+    JSON = session.json()
+    i = d = f = 0
+    while i < len(JSON["contents"]):
+
+        ID = JSON["contents"][i]["illust_id"]
+        userId = JSON["contents"][i]["user_id"]
+        title = JSON["contents"][i]["title"]
+        userName = JSON["contents"][i]["user_name"]
+        url = JSON["contents"][i]["url"]
+        o_url_1 = re.sub(r'/c/240x480/[a-zA-Z-]*/', '/img-original/', url)
+        o_url = re.sub(r'_[a-z]+1200.', '.', o_url_1)
+        if f:
+            o_url=re.sub('.jpg','.png',o_url)
+
+        print("作品名称：" + title, "作品ID：" + str(ID),  "作者姓名和ID：" + userName, str(userId))
+        print('Downloading……\n')
+
+        img_url = o_url
+        file_name ="作品ID：" + str(ID)
+        try:
+            file_suffix = os.path.splitext(img_url)[1]
+            filename = '{}{}{}{}'.format(file_path, os.sep, file_name, file_suffix)
+#            print(file_path)
+            response = requests.get(img_url, headers=headers)
+#            print(os.sep)
+            image = Image.open(BytesIO(response.content))
+#            print(file_name)
+            image.save(filename)
+#            print(file_suffix)
+            f=0
+        except IOError as e:
+            if f==0:
+                f=1
+                i-=1
+            else:
+                print("IOError")
+                f=0
+                d += 1
+        except Exception as e:
+            print("Exception")
+            d += 1
+        i += 1
+end=datetime.datetime.now()
+print("用时：{},共捕捉图片：{}张,失败 ；{}".format(end-start,i - d,d))
