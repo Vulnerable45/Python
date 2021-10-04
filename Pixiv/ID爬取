@@ -4,7 +4,7 @@ import datetime
 import requests
 from PIL import Image
 from io import BytesIO
-
+#By WuXin
 start = datetime.datetime.now()
 input_file = r'C:\Users\lenovo\Desktop\Pixiv\作者ID\ID.txt'
 filereader = open(input_file, 'r',encoding='utf_8')
