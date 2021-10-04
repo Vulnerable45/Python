@@ -5,7 +5,7 @@ from PIL import Image
 from io import BytesIO
 import datetime
 from datetime import date
-
+#By WuXin
 a = input('起始页码：')
 p = input('终止页码：')
 start=datetime.datetime.now()
